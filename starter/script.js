@@ -544,12 +544,44 @@ Remember : BMI = mass/ height^2 (mass in kg and height in meter).
 //}
 
 
-var d;
 
 
 
+/*************************
+* Loops and iteration
+*/
+//
+//for (var i = 0; i < 10; i++){
+//  console.log(i);
+//}
+//var john = ['john', 'Smith', 1990, 'designer', false];
+//
+//for(var ev= 0; i<john.length; i++) {
+//  console.log(john[ev]);
+//}
+//var k = 0;
+//while(k < john.length){
+//  console.log(john[k]);
+//  i++;
+//}
 
 
+var john = ['john', 'Smith', 1990, 'designer', false];
+//continueは該当の条件が来たらそこを飛ばしてループは継続
+for (var i = 0; i < john.length; i++){
+  if(typeof john[i] !=='string') continue;
+  console.log(john[i]);
+}
+//breakは該当の条件が来たらforループを中断。
+for (var i = 0; i < john.length; i++){
+  if(typeof john[i] !=='string') break;
+  console.log(john[i]);
+}
 
 
-var g;
+//Looping backwards
+
+for (var i = john.length - 1; i >= 0; i--){
+  console.log(john[i]);
+}
+
