@@ -545,8 +545,6 @@ Remember : BMI = mass/ height^2 (mass in kg and height in meter).
 
 
 
-
-
 /*************************
 * Loops and iteration
 */
@@ -584,4 +582,3 @@ for (var i = 0; i < john.length; i++){
 for (var i = john.length - 1; i >= 0; i--){
   console.log(john[i]);
 }
-
