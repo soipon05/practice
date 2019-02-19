@@ -1,0 +1,47 @@
+body{
+    font-family: Source Sans Pro;
+    background: #69d9e2;
+    background-size: 400% 400%;
+    animation: Gradient   15s ease infinite;
+}
+
+h1 {
+    font-weight: lighter;
+    font-size: 80px;
+    color: #fff;
+    text-align: center;
+    padding-top: 50px;
+    margin-bottom: 0;
+}
+
+p {
+    color: #ffffff;
+    text-align: center;
+    font-family: Source San Pro;
+    font-weight: lighter;
+    font-size: 20px;
+    margin-top: 0;
+}
+
+
+.item {
+    margin: 1rem 2rem;
+    font-size: 2.5rem;
+    padding: 1rem;
+    border: 0.1rem solid #fff;
+    border-radius: 80%;
+    transition: .5s;
+}
+
+.item:hover {
+    color: #292929;
+    border: 0.1rem solid #292929;
+    transition: .5s;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
+}
