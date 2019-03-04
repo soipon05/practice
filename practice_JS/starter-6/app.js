@@ -7,21 +7,17 @@ var budgetController = (function () {
     this.percentage = -1;
   };
 
-
-
   Expense.prototype.calcPercentage = function (totalIncome) {
     if (totalIncome > 0) {
       this.percentage = Math.round((this.value / totalIncome) * 100);
     } else {
       this.percentage = -1;
     }
-
   };
 
   Expense.prototype.getPercentage = function () {
     return this.percentage;
   };
-
 
   var Income = function (id, description, value) {
     this.id = id;
@@ -125,7 +121,6 @@ var budgetController = (function () {
       data.allItems.exp.forEach(function (cur) {
         cur.calcPercentage(data.totals.inc);
       });
-
     },
 
     getPercentage: function () {
@@ -163,7 +158,47 @@ var UIController = (function () {
     incomeLabel: ".budget__income--value",
     expensesLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
-    container: ".container"
+    container: ".container",
+    expensesPercLabel: ".item__percentage",
+    dateLabel: ".budget__title--month"
+  };
+
+  var formatNumber = function (num, type) {
+    var numSplit, int, dec;
+    /**
+     * + or -before number
+     * exactly 2 decimal points
+     * comma separating the thousands
+     *
+     * 2310.4567 -> + 2,310.46
+     * 2000 .> + 2,000.00
+     */
+
+    num = Math.abs(num);
+    // 小数点第2位まで表示させる
+    num = num.toFixed(2);
+
+    numSplit = num.split(".");
+    //substrは推奨しないとMDNにあったのでsubstringを使用しています.やり方があっているか不安ですが、
+    int = numSplit[0];
+    if (int.length > 3) {
+      int =
+        int.substring(0, int.length - 3) +
+        "," +
+        int.substring(int.length - 3, int.length);
+      // input 2310, output 2,310 input 25310 output 25,310
+    }
+
+    dec = numSplit[1];
+
+    //日本では通常では小数点の現金計算はないのでカットしました
+    return (type === "exp" ? "-" : "+") + " " + int + "円";
+  };
+
+  var nodeListForEach = function (list, callback) {
+    for (var i = 0, len = list.length; i < len; i++) {
+      callback(list[i], i);
+    }
   };
 
   return {
@@ -188,7 +223,7 @@ var UIController = (function () {
       //Replace the placeholder text with some actual data
       newHtml = html.replace("%id%", obj.id);
       newHtml = newHtml.replace("%description%", obj.description);
-      newHtml = newHtml.replace("%value%", obj.value);
+      newHtml = newHtml.replace("%value%", formatNumber(obj.value, type));
 
       // Inseart the HTML into the DOM
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
@@ -217,16 +252,79 @@ var UIController = (function () {
     },
 
     displayBudget: function (obj) {
-      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-      document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
-      document.querySelector(DOMstrings.expensesLabel).textContent =
-        obj.totalExp;
+      var type;
+      obj.budget >= 0 ? (type = "inc") : (type = "exp");
+      document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(
+        obj.budget,
+        type
+      );
+      document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(
+        obj.totalInc,
+        "inc"
+      );
+      document.querySelector(
+        DOMstrings.expensesLabel
+      ).textContent = formatNumber(obj.totalExp, "exp");
+
       if (obj.percentage > 0) {
         document.querySelector(DOMstrings.percentageLabel).textContent =
           obj.percentage + "%";
       } else {
         document.querySelector(DOMstrings.percentageLabel).textContent = "---";
       }
+    },
+
+    displayPercentages: function (percentages) {
+      var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
+
+      nodeListForEach(fields, function (current, index) {
+        if (percentages[index] > 0) {
+          current.textContent = percentages[index] + "%";
+        } else {
+          current.textContent = "---";
+        }
+      });
+    },
+
+    displayMonth: function () {
+      var now, year, month, months;
+      now = new Date();
+      //example => var christmas = new Date(2016, 11, 25);
+      months = [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+      ];
+      month = now.getMonth();
+
+      year = now.getFullYear();
+      document.querySelector(DOMstrings.dateLabel).textContent =
+        year + "年 " + months[month];
+    },
+
+    changedType: function () {
+
+      var fields = document.querySelectorAll(
+        DOMstrings.inputType + ',' +
+        DOMstrings.inputDescription + ',' +
+        DOMstrings.inputValue
+      );
+
+      nodeListForEach(fields, function (cur) {
+        cur.classList.toggle('red-focus');
+      });
+
+      document.querySelector(DOMstrings.inputBtn).classList.toggle('red');
+
     },
 
     getDOMstrings: function () {
@@ -248,35 +346,33 @@ var controller = (function (budgetCtrl, UICtrl) {
       }
     });
 
-    document
-      .querySelector(DOM.container)
-      .addEventListener("click", ctrlDeleteItem);
+    document.querySelector(DOM.container).addEventListener("click", ctrlDeleteItem);
+
+    document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
+
   };
 
   var updateBudget = function () {
-    //1. Calculate the budget
+    //1. 収入から総収入を計算しますもしくは支出
     budgetCtrl.calculateBudget();
 
-    //2. Return the budget
+    //2. 計算した値を取得し保持します
     var budget = budgetCtrl.getBudget();
 
-    //3.Display the budget on the UI
+    //3.画面上に取得した値を反映させます
     UICtrl.displayBudget(budget);
   };
 
   var updatePercentages = function () {
-
-    //1.Calculate percentages
+    //1.個々の支出のパーセンテージを計算する
     budgetCtrl.calculatePercentages();
 
-    //2. Read percentages from the budget controller
+    //2. budgetCtrlで行われた計算を取得してくる
     var percentages = budgetCtrl.getPercentage();
 
-    //3. Update the UI with the new percentages
-    console.log(percentages);
-
+    //3. 画面の個々の支出のパーセンテージを更新する
+    UICtrl.displayPercentages(percentages);
   };
-
 
   var ctrlAddItem = function () {
     var input, newItem;
@@ -313,14 +409,14 @@ var controller = (function (budgetCtrl, UICtrl) {
       type = splitID[0];
       ID = parseInt(splitID[1]);
 
-      //1. delete the item form the data structure
+      //1. dataを配列から削除します。表示上は残ってしまいます。
       budgetCtrl.deleteItem(type, ID);
-      //2. Delete the item from the UI
+      //2. 画面上から削除します。
       UICtrl.deleteListItem(itemID);
-      //3. Update and show the new budget
+      //3. 画面上部の収入と支出を更新します。
       updateBudget();
 
-      //4. Calculate and update percentages
+      //4. パーセンテージを計算して更新します。
       updatePercentages();
     }
   };
@@ -328,6 +424,7 @@ var controller = (function (budgetCtrl, UICtrl) {
   return {
     init: function () {
       console.log("Application has started.");
+      UICtrl.displayMonth();
       UICtrl.displayBudget({
         budget: 0,
         totalInc: 0,
