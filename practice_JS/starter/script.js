@@ -183,3 +183,201 @@ var box6 = {
 // //メソッド定義もarrowにするとthisがグローバルオブジェクトを参照してしまう
 // //arrow functionを使うとthisがもっとわかりやすい使い方になる
 // box6a.clickMe();
+
+// function Person(name) {
+//     this.name = name;
+// }
+
+// //ES5
+// Person.prototype.myFriends5 =
+//     function (friends) {
+
+//         var arr = friends.map(function (el) {
+//             return this.name + " is friends with " + el;
+//         }.bind(this));
+
+//         console.log(arr);
+//     }
+
+// var friends = ["Bob", "Jane", "Mark"];
+
+// new Person("John").myFriends5(friends);
+
+// //ES6
+// Person.prototype.myFriends6 =
+//     function (friends) {
+
+//         var arr = friends.map(el =>
+//             `${this.name} is friends with ${el}`);
+
+
+//         console.log(arr);
+//     }
+
+
+// new Person("Mike").myFriends5(friends);
+/////////////////////////
+// Destructuring　分割代入
+
+
+// //ES5
+// var john = ["John", 26];
+// // var name = john[0];
+// // var age = john[1];
+
+// //ES6
+// const [name, age] = ["John", 26];
+// console.log(name);
+// console.log(age);
+
+// const obj = {
+//     firstName: "John",
+//     lastName: "Smith"
+// };
+
+// const {
+//     firstName,
+//     lastName
+// } = obj;
+// console.log(firstName);
+// console.log(lastName);
+
+// const {
+//     firstName: a,
+//     lastName: b
+// } = obj;
+
+// console.log(a);
+// console.log(b);
+
+// function calcAgeRetirement(year) {
+//     const age = new Date().getFullYear - year;
+//     return [age, 65 - age];
+// };
+
+// const [age2, retirement] = calcAgeRetirement(1990);
+// console.log(age2);
+// console.log(retirement);
+
+//////////////////
+// Lecture: Arrays
+
+// const boxes = document.querySelectorAll(".box");
+// //querySelectorAllはnodeListを返す
+
+// //ES5
+// // //nodeListではforEachが使えなかったのでsliceしてcallする
+// // //sliceは配列をコピーする,callは引数のオブジェクトがcall前のオブジェクトのメソッドを使うのに呼ぶ
+// var boxesArr5 = Array.prototype.slice.call(boxes);
+// // boxesArr5.forEach(function (cur) {
+// //     cur.style.backgroundColor = "dodgerblue";
+// // });
+
+// // //ES6
+// const boxesArr6 = Array.from(boxes);
+// Array.from(boxes).forEach(cur => cur.style.backgroundColor = "dodgerblue");
+
+// //ES5
+// // for (var i = 0, len = boxesArr5.length; i < len; i++) {
+
+
+// //     if (boxesArr5[i].className === "box blue") {
+// //         continue;
+// //     }
+
+// //     boxesArr5[i].textContent = "I changed to blue!";
+
+// // }
+
+
+// //ES6
+// for (const cur of boxesArr6) {
+//     if (cur.className.includes("blue")) {
+//         continue;
+//     }
+//     cur.textContent = "I changed to blue!!!";
+// }
+
+// // ES5
+// var ages = [12, 17, 8, 21, 14, 11];
+
+// var full = ages.map(function (cur) {
+//     return cur >= 18;
+// });
+// console.log(full);
+
+// //fullの配列の中でtrueなのは何番目か持ってくる
+// console.log(full.indexOf(true));
+// //age[i] i=full.indexOf(true)みたいな感じかな
+// //mapで真偽値だして同じ長さの配列を作るからageの番号と真偽の番号が一致する
+// console.log(ages[full.indexOf(true)]);
+
+// //ES6
+// //ES6だとfindIndexを使って検索してくるのと、findを使って条件分を満たす値を返すようにする
+// console.log(ages.findIndex(cur => cur >= 18));
+// console.log(age.find(cur => cur >= 18));
+
+//////////////////////////////
+// Lecture: Spread operator
+
+// function addFourAges(a, b, c, d) {
+//     return a + b + c + d;
+// };
+
+// var sum1 = addFourAges(18, 30, 12, 21);
+// console.log(sum1);
+
+// //ES5
+// var ages = [18, 30, 12, 21];
+// //.applyはメソッドを拝借する時に使う。第一引数に使いたいobj名、第二引数にメソッドに使う引数を指定する。applyは引数に配列を使える
+// var sum2 = addFourAges.apply(null, ages);
+// console.log(sum2);
+
+// //ES6 スプレッド構文
+
+// const sum3 = addFourAges(...ages);
+// console.log(sum3);
+
+// const familySmith = ["John", "Jane", "Mark"];
+// const familyMiller = ["Mary", "Bob", "Ann"];
+// const bigFamily = [...familySmith, "Lily", ...familyMiller];
+
+// const h = document.querySelector("h1");
+// const boxes = document.querySelectorAll(".box");
+// const all = [h, ...boxes];
+
+// Array.from(all).forEach(cur => cur.style.color = "purple");
+
+
+///////////////////////////////////
+// Lecture: Rest parameters
+
+//ES5
+function isFullAge5() {
+    // console.log(arguments);
+    var argsArr = Array.prototype.slice.call(arguments);
+
+    argsArr.forEach(function (cur) {
+        console.log((2019 - cur) >= 18);
+    })
+}
+//引数を表示させてみると中身は配列のように表示されているけど配列ではない
+//そのを示すのが__proto__がObjectsになっているから
+//Array構造のような感じだけど実は違う
+//もしArrayとして使いたいのなら
+
+// isFullAge5(1990, 1999, 1965);
+// isFullAge5(1990, 1999, 1965, 2016, 1987);
+
+//ES6
+//rest prametersを使うことで引数を配列として扱うことができる
+//通常の引数は配列に見えるだけで違うのでforEachを使うのに手間がかかったけどこれなら大丈夫になる
+function isFullAge6(...years) {
+    // console.log(years);
+    years.forEach(cur => console.log((2019 - cur) >= 18));
+}
+
+isFullAge6(1990, 1999, 1965);
+
+//spreadとrest parametersの違いは？restの方は関数の宣言の時に使う
+//spreadは関数実行の時に使う
