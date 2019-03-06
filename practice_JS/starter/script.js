@@ -346,38 +346,103 @@ var box6 = {
 // const boxes = document.querySelectorAll(".box");
 // const all = [h, ...boxes];
 
-// Array.from(all).forEach(cur => cur.style.color = "purple");
+// // Array.from(all).forEach(cur => cur.style.color = "purple");
 
 
-///////////////////////////////////
-// Lecture: Rest parameters
+// ///////////////////////////////////
+// // Lecture: Rest parameters
 
-//ES5
-function isFullAge5() {
-    // console.log(arguments);
-    var argsArr = Array.prototype.slice.call(arguments);
+// //ES5
+// function isFullAge5() {
+//     // console.log(arguments);
+//     var argsArr = Array.prototype.slice.call(arguments);
 
-    argsArr.forEach(function (cur) {
-        console.log((2019 - cur) >= 18);
-    })
-}
-//引数を表示させてみると中身は配列のように表示されているけど配列ではない
-//そのを示すのが__proto__がObjectsになっているから
-//Array構造のような感じだけど実は違う
-//もしArrayとして使いたいのなら
+//     argsArr.forEach(function (cur) {
+//         console.log((2019 - cur) >= 18);
+//     })
+// }
+// //引数を表示させてみると中身は配列のように表示されているけど配列ではない
+// //そのを示すのが__proto__がObjectsになっているから
+// //Array構造のような感じだけど実は違う
+// //もしArrayとして使いたいのなら
 
-// isFullAge5(1990, 1999, 1965);
-// isFullAge5(1990, 1999, 1965, 2016, 1987);
+// // isFullAge5(1990, 1999, 1965);
+// // isFullAge5(1990, 1999, 1965, 2016, 1987);
+
+// //ES6
+// //rest prametersを使うことで引数を配列として扱うことができる
+// //通常の引数は配列に見えるだけで違うのでforEachを使うのに手間がかかったけどこれなら大丈夫になる
+// function isFullAge6(...years) {
+//     // console.log(years);
+//     years.forEach(cur => console.log((2019 - cur) >= 18));
+// }
+
+// // isFullAge6(1990, 1999, 1965);
+
+// //spreadとrest parametersの違いは？restの方は関数の宣言の時に使う
+// //spreadは関数実行の時に使う
+
+
+// function isFullAge5(limit) {
+//     // console.log(arguments);
+//     //第二引数で指定した位置からコピーが始まる
+//     var argsArr = Array.prototype.slice.call(arguments, 1);
+
+//     argsArr.forEach(function (cur) {
+//         console.log((2019 - cur) >= limit);
+//     })
+// }
+
+// // isFullAge5(21, 1990, 1999, 1965);
+
+// function isFullAge6(limit,...years) {
+//     // console.log(years);
+//     years.forEach(cur => console.log((2019 - cur) >= limit));
+// }
+
+// isFullAge6(16, 1990, 1999, 1965);
+// //最後は第二引数の扱いかたについてでした。
+
+///////////////////////
+// Lecture: Default prameters
+
+// //ES5
+// function SmithPerson(firstName, yearOfBirth, lastName, nationality) {
+
+//     lastName === undefined ? lastName = "Smith": lastName;
+//     nationality === undefined ? nationality = "american" : nationality;
+    
+//     this.firstName = firstName;
+//     this.lastName = lastName;
+//     this.yearOfBirth = yearOfBirth;
+//     this.nationality = nationality;
+// }
+
+// var john = new SmithPerson("John", 1990);
+// var emily = new SmithPerson("Emily", 1983, "Diaz", "spanish");
 
 //ES6
-//rest prametersを使うことで引数を配列として扱うことができる
-//通常の引数は配列に見えるだけで違うのでforEachを使うのに手間がかかったけどこれなら大丈夫になる
-function isFullAge6(...years) {
-    // console.log(years);
-    years.forEach(cur => console.log((2019 - cur) >= 18));
-}
+// //ES6では最初に定義している段階から初期値を指定できる
+// function SmithPerson(firstName, yearOfBirth, lastName ="Smith", nationality = "american"){
+//         this.firstName = firstName;
+//     this.lastName = lastName;
+//     this.yearOfBirth = yearOfBirth;
+//     this.nationality = nationality;
+// }
 
-isFullAge6(1990, 1999, 1965);
+// var emily = new SmithPerson("Emily", 1983, "Diaz", "spanish");
 
-//spreadとrest parametersの違いは？restの方は関数の宣言の時に使う
-//spreadは関数実行の時に使う
+
+
+////////////////////////////////////
+// Lecture: Maps
+
+const question = new Map();
+question.set("question", "What is the officail name of the lateste major JavaScript");
+question.set(1, "ES5");
+question.set(2, "ES6");
+question.set(3, "ES2015");
+question.set(4, "ES7");
+question.set("correct", 3);
+question.set(true,"Correct anwear :D");
+question.set(false, "Wrong , please try again!");
