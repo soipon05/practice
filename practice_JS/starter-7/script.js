@@ -588,7 +588,7 @@ class Park extends Element {
   }
 
   treeDensity() {
-    const density = this.numTrees / this.area;
+    const density = (this.numTrees / this.area).toFixed(2);
     console.log(
       `${this.name} has a tree density of ${density} trees per square km.`
     );
@@ -619,7 +619,7 @@ class Street extends Element {
 
 const allParks = [
   new Park("Green Park", 1987, 0.2, 215),
-  new Park("National Park", 1894, 2.9, 354),
+  new Park("National Park", 1894, 2.9, 3541),
   new Park("Oak Park", 1953, 0.4, 949)
 ];
 
@@ -630,16 +630,34 @@ const allStreets = [
   new Street("Sunset Boulevard", 1982, 2.5, 5)
 ];
 
+function calc(arr) {
+
+  const sum = arr.reduce((prev, cur, index) => prev + cur, 0);
+  return [sum, sum / arr.length];
+  
+}
+
 function reportParks(p) {
   console.log("--------PARKS REPORT----");
   //Density
   p.forEach(el => el.treeDensity());
   //Average age
-
+  const ages = p.map(el => new Date().getFullYear() -el.buildYear);
+  const [totalAge, avgAge] = calc(ages);
+  console.log(`Our ${p.length} parks have an average of ${avgAge} years.`)
   //Which park has more than 1000 trees
+  const i  = p.map(el => el.numTrees).findIndex(el => el >= 1000);
+  console.log(`${p[i].name} has more than 1000 trees.`)
 }
 
-function reoprtStreets(s) {}
+function reoprtStreets(s) {
+  console.log("--------Streets REPORT-------");
+  //Total and average length of the town's streets
+  const [totalLength, avgLength] = calc(s.map(el => el.length));
+  console.log(`Our ${s.length} streets have a total length of ${totalLength} km, with an average of ${avgLength} km.`);
+
+  s.forEach(el => el.classifyStreet());
+}
 
 reportParks(allParks);
 reoprtStreets(allStreets);
